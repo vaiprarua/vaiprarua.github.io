@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vai pra rua | Eventos InfoSec 2026</title>
+    <style>
+        :root {
+            --bg-color: #0a0a0a;
+            --card-bg: #161616;
+            --text-primary: #e0e0e0;
+            --text-secondary: #a0a0a0;
+            --accent-color: #00ff41;
+            --accent-hover: #00cc33;
+            --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            --font-mono: 'Courier New', Courier, monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            font-family: var(--font-main);
+            line-height: 1.6;
+        }
+
+        header {
+            text-align: center;
+            padding: 60px 20px;
+            border-bottom: 1px solid #333;
+            background: radial-gradient(circle at center, #1a1a1a 0%, #0a0a0a 100%);
+        }
+
+        h1 {
+            font-family: var(--font-mono);
+            font-size: 3rem;
+            color: var(--accent-color);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .events-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background-color: var(--accent-color);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 255, 65, 0.1);
+            border-color: var(--accent-color);
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        .card h2 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: #fff;
+        }
+
+        .card-info {
+            margin-bottom: 20px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .icon {
+            margin-right: 10px;
+            font-style: normal;
+        }
+
+        .btn {
+            display: inline-block;
+            text-align: center;
+            background-color: transparent;
+            color: var(--accent-color);
+            border: 1px solid var(--accent-color);
+            padding: 10px 20px;
+            text-decoration: none;
+            font-family: var(--font-mono);
+            font-weight: bold;
+            border-radius: 4px;
+            transition: background 0.3s, color 0.3s;
+            margin-top: auto;
+        }
+
+        .btn:hover {
+            background-color: var(--accent-color);
+            color: #000;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px;
+            color: #555;
+            font-size: 0.9rem;
+            margin-top: 40px;
+            border-top: 1px solid #1f1f1f;
+        }
+
+        #loading {
+            text-align: center;
+            font-size: 1.2rem;
+            color: var(--accent-color);
+        }
+    </style>
+</head>
+<body>
+    
+
+    <header>
+        <h1>Vai pra rua_</h1>
+        <p class="subtitle">Calendário de Eventos de Segurança da Informação 2026</p>
+    </header>
+
+    <main class="container">
+        <div id="loading">Carregando eventos...</div>
+        <div id="events-container" class="events-grid">
+            </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Vai pra rua. Open Source Project.</p>
+    </footer>
+
+    <script>        
+        document.addEventListener('DOMContentLoaded', () => {
+            const container = document.getElementById('events-container');
+            const loading = document.getElementById('loading');
+
+            function createCard(event) {
+                return `
+                    <article class="card">
+                        <div>
+                            <h2>${event.title}</h2>
+                            <div class="card-info">
+                                <div class="info-item">
+                                    <span class="icon">📅</span>
+                                    <span>${event.date}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="icon">📍</span>
+                                    <span>${event.location}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="${event.link}" target="_blank" class="btn">ACESSAR EVENTO</a>
+                    </article>
+                `;
+            }
+
+            fetch('./events.json')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Erro ao carregar o arquivo de eventos.');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    loading.style.display = 'none';
+                    
+                    if (data.length === 0) {
+                        container.innerHTML = '<p>Nenhum evento encontrado.</p>';
+                        return;
+                    }
+
+                    const eventsHTML = data.map(event => createCard(event)).join('');
+                    container.innerHTML = eventsHTML;
+                })
+                .catch(error => {
+                    console.error('Erro:', error);
+                    loading.innerHTML = `Erro ao carregar eventos: ${error.message}.<br>Verifique se o arquivo events.json está na mesma pasta.`;
+                    loading.style.color = 'red';
+                });
+        });
+    </script>
+</body>
+</html>
