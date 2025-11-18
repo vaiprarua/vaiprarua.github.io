@@ -1,0 +1,14 @@
+[
+  {
+    "title": "BSides Rio de Janeiro",
+    "location": "Universidade Veiga de Almeida - Campus Tijuca",
+    "date": "28 de Março de 2026",
+    "link": "https://bsidesrj.com.br/"
+  },
+  {
+    "title": "Quer adicionar mais um evento?",
+    "location": "Abre um PR no nosso repositório do GitHub :)",
+    "date": "",
+    "link": "https://github.com/htrgouvea/vaiprarua"
+  }
+]
